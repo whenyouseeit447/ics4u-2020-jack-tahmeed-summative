@@ -1,13 +1,14 @@
 package flap;
 import java.awt.*;//* used to be Graphics
 import java.awt.event.*;// * used to be ActionListener, I don't even understand how this fixes the problem, but it does. 
-import java.util.*;
+import java.util.Random;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
 public class Flap implements ActionListener, MouseListener, KeyListener{
   public static Flap flap;
-  public final int WIDTH=1080, HEIGHT=720;//Should all these be public static?
+  public final int WIDTH=1080, HEIGHT=720;
   public Renderer renderer;
   public Rectangle bird;
   public Random rand;
@@ -30,13 +31,14 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
     jframe.setTitle("Flap");
     jframe.setVisible(true);
     
-    bird = new Rectangle(WIDTH/2-10, HEIGHT/2-10, 20,20);
-    columns = new ArrayList();
+    bird = new Rectangle(WIDTH/2-10, HEIGHT/2-10, 34,24);
+    columns = new ArrayList();//Column array
     
-    addColumn(true);
-    addColumn(true);
-    addColumn(true);
-    addColumn(true);
+    //create a set of columns on launch
+    addColumn(true); 
+    addColumn(true);  
+    addColumn(true);  
+    addColumn(true);  
     
     timer.start();
   
@@ -44,15 +46,18 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
   
   public void addColumn(boolean start){
     int space = 300;
-    int width = 100;
+    int columnSpacing = 200;
+    int width = 70;
     int height = 50 + rand.nextInt(200);
     
     if (start){
-      columns.add(new Rectangle(WIDTH + width + columns.size()*300,HEIGHT - height - 120, width, height));
-      columns.add(new Rectangle(WIDTH + width + (columns.size()-1)*300, 0 ,width, HEIGHT-height-space)); 
+      //Adds column with specific dimensions to the array list
+      //columnSpacing*2
+      columns.add(new Rectangle(WIDTH + width + columns.size()*columnSpacing,HEIGHT - height - 120, width, height));
+      columns.add(new Rectangle(WIDTH + width + (columns.size()-1)*columnSpacing, 0 ,width, HEIGHT-height-space)); 
     }
     else{
-      columns.add(new Rectangle(columns.get(columns.size()-1).x + 600, HEIGHT - height - 120, width, height));
+      columns.add(new Rectangle(columns.get(columns.size()-1).x + columnSpacing*2, HEIGHT - height - 120, width, height));
       columns.add(new Rectangle(columns.get(columns.size()-1).x, 0, width, HEIGHT-height-space)); 
     }
   }
@@ -64,15 +69,16 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
   
  public void jump(){
    if (gameOver){
-    bird = new Rectangle(WIDTH/2-10, HEIGHT/2-10, 20,20);
+    bird = new Rectangle(WIDTH/2-10, HEIGHT/2-10, 34,24);
     columns.clear();
     ymotion = 0;
     score = 0;
     
+    //add 4 more columns on death for next round
     addColumn(true);
     addColumn(true);
     addColumn(true);
-    addColumn(true);
+    addColumn(true);  
     
     gameOver= false;
    }
@@ -85,6 +91,7 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
        ymotion = 0;
      }
    }
+  
    ymotion -= 10;
  }
  
@@ -96,7 +103,7 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
     if (started){
       for (int i=0; i<columns.size(); i++){
         Rectangle column = columns.get(i);
-        column.x -= 10;
+        column.x -= speed;
         if (column.x + column.width <0){
           columns.remove(column);
           if (column.y==0){
@@ -111,7 +118,7 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
       bird.y += ymotion;
       for (Rectangle column: columns){
         
-        if (column.y == 0 && bird.x + bird.width / 2 > column.x + column.width /2 -10 && bird.x+ bird.width /2 < column.x + column.width / 2 +10){
+        if (column.y == 0 && bird.x + bird.width / 2 > column.x + column.width /2 -5 && bird.x+ bird.width /2 < column.x + column.width / 2  + 5){
           score ++;
         }
         
@@ -133,11 +140,12 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
       }
     }
   
+  //if bird hits ceiling or ground, its game over
   if ((bird.y > HEIGHT - 150) ||(bird.y<0)) {
-    bird.y = HEIGHT - 150;
     gameOver = true;
   }
   
+  //makes the bird fall to ground
   if (bird.y + ymotion >= HEIGHT - 150){
     bird.y = HEIGHT -120 - bird.height;
   }
