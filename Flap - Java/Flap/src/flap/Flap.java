@@ -200,11 +200,12 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
   
   @Override
   public void mouseClicked(MouseEvent e){
-    jump();
+    //jump(); Why was this here?
   }
   
   @Override
   public void mousePressed(MouseEvent e){
+      jump();
   }
   
   @Override
