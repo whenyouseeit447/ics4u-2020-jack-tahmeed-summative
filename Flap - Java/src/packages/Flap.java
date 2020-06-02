@@ -24,7 +24,15 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
     
     jframe.add(renderer);
     jframe.setDefaultCloseOperation(jframe.EXIT_ON_CLOSE);
+    
+    //Toolkit imported from java.awt.*
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//only used for the screen size
+    double screenWidth = screenSize.getWidth();
+    double screenHeight = screenSize.getHeight();
     jframe.setSize(WIDTH,HEIGHT);
+    jframe.setLocation(((int)screenWidth - WIDTH)/2, ((int)screenHeight - HEIGHT)/2);
+    
+    
     jframe.addMouseListener(this);
     jframe.addKeyListener(this);
     jframe.setResizable(false);
@@ -200,11 +208,12 @@ public class Flap implements ActionListener, MouseListener, KeyListener{
   
   @Override
   public void mouseClicked(MouseEvent e){
-    jump();
+    //jump(); Why was this here?
   }
   
   @Override
   public void mousePressed(MouseEvent e){
+     jump();
   }
   
   @Override
